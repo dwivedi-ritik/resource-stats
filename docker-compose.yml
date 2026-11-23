@@ -1,0 +1,21 @@
+services:
+  stats-lite:
+    image: ghcr.io/ritik/stats-lite:latest
+    build: .
+    container_name: stats-lite
+    restart: unless-stopped
+    # WHY: host networking and PID namespaces let the container see the host's
+    # real network counters, process count and load; without them it would
+    # report its own tiny sandbox. The UI is then reachable on host port 8080.
+    network_mode: host
+    pid: host
+    environment:
+      STATS_LITE_ADDR: ":8080"
+      # Uncomment to require a login: STATS_LITE_AUTH: "admin:change-me"
+      HOST_PROC: /host/proc
+      HOST_SYS: /host/sys
+      HOST_ETC: /host/etc
+      STATS_LITE_HOST_ROOT: /host
+    volumes:
+      - /:/host:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro

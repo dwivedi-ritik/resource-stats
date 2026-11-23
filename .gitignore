@@ -1,0 +1,7 @@
+/dist/
+/stats-lite
+/stats-lite.exe
+*.test
+*.out
+.DS_Store
+node_modules/

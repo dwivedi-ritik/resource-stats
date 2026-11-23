@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>stats-lite</title>
+<meta name="description" content="Live CPU, memory, network, disk and Docker usage for this machine.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="identity">
+    <div class="wordmark"><span class="logo" aria-hidden="true"></span>stats-lite</div>
+    <h1 id="hostname">—</h1>
+    <p class="subtitle" id="host-subtitle">connecting…</p>
+  </div>
+  <div class="topbar-right">
+    <div class="status" id="status" role="status" aria-live="polite">
+      <span class="status-dot"></span><span id="status-text">connecting</span>
+    </div>
+    <button class="icon-button" id="theme-toggle" type="button" title="Switch between automatic, light and dark theme" aria-label="Switch theme">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor" stroke="none"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="card" aria-labelledby="cpu-title">
+    <div class="card-head">
+      <h2 id="cpu-title">CPU</h2>
+      <span class="meta" id="cpu-meta"></span>
+    </div>
+    <div class="hero"><span class="hero-value" id="cpu-value">—</span><span class="hero-unit">%</span></div>
+    <div class="chart-wrap"><canvas class="chart" id="cpu-chart" aria-label="CPU usage over the last two minutes" role="img"></canvas><div class="tooltip" hidden></div></div>
+    <div class="cores" id="cores" aria-label="Per core usage"></div>
+    <div class="footnote" id="cpu-foot"></div>
+  </section>
+
+  <section class="card" aria-labelledby="mem-title">
+    <div class="card-head">
+      <h2 id="mem-title">Memory</h2>
+      <span class="meta" id="mem-meta"></span>
+    </div>
+    <div class="hero"><span class="hero-value" id="mem-value">—</span><span class="hero-unit">%</span></div>
+    <div class="chart-wrap"><canvas class="chart" id="mem-chart" aria-label="Memory usage over the last two minutes" role="img"></canvas><div class="tooltip" hidden></div></div>
+    <div class="kv-row">
+      <div class="kv"><span class="kv-label">Used</span><span class="kv-value" id="mem-used">—</span></div>
+      <div class="kv"><span class="kv-label">Available</span><span class="kv-value" id="mem-available">—</span></div>
+      <div class="kv"><span class="kv-label">Total</span><span class="kv-value" id="mem-total">—</span></div>
+    </div>
+    <div class="bar-row" id="swap-row" hidden>
+      <div class="bar-label"><span>Swap</span><span id="swap-text"></span></div>
+      <div class="bar"><div class="bar-fill mem" id="swap-fill"></div></div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="net-title">
+    <div class="card-head">
+      <h2 id="net-title">Network</h2>
+      <span class="legend" aria-hidden="true"><span class="swatch in"></span>In <span class="swatch out"></span>Out</span>
+    </div>
+    <div class="hero-pair">
+      <div class="hero small"><span class="direction"><span class="swatch in"></span>In</span><span class="hero-value" id="net-rx">—</span><span class="hero-unit" id="net-rx-unit"></span></div>
+      <div class="hero small"><span class="direction"><span class="swatch out"></span>Out</span><span class="hero-value" id="net-tx">—</span><span class="hero-unit" id="net-tx-unit"></span></div>
+    </div>
+    <div class="chart-wrap"><canvas class="chart" id="net-chart" aria-label="Network throughput over the last two minutes" role="img"></canvas><div class="tooltip" hidden></div></div>
+    <div class="list" id="interfaces"></div>
+  </section>
+
+  <section class="card" aria-labelledby="disk-title">
+    <div class="card-head">
+      <h2 id="disk-title">Storage</h2>
+      <span class="meta" id="disk-io"></span>
+    </div>
+    <div class="list" id="disks"></div>
+  </section>
+
+  <section class="card wide" aria-labelledby="docker-title">
+    <div class="card-head">
+      <h2 id="docker-title">Docker</h2>
+      <span class="meta" id="docker-meta"></span>
+    </div>
+    <div class="empty" id="docker-empty" hidden></div>
+    <div class="table-wrap">
+      <table class="containers" id="containers" hidden>
+        <thead><tr>
+          <th scope="col">Container</th>
+          <th scope="col">State</th>
+          <th scope="col" class="num">CPU</th>
+          <th scope="col" class="mem-col">Memory</th>
+          <th scope="col" class="num">Network In</th>
+          <th scope="col" class="num">Network Out</th>
+          <th scope="col" class="num">Disk Read</th>
+          <th scope="col" class="num">Disk Write</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><span id="foot-text"></span></footer>
+<script src="app.js"></script>
+</body>
+</html>
