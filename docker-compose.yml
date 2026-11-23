@@ -4,10 +4,14 @@ services:
     build: .
     container_name: stats-lite
     restart: unless-stopped
-    # WHY: host networking and PID namespaces let the container see the host's
-    # real network counters, process count and load; without them it would
-    # report its own tiny sandbox. The UI is then reachable on host port 8080.
-    network_mode: host
+    # Change the left number to pick the port you open in the browser,
+    # for example "9090:8080" -> http://<machine-ip>:9090
+    ports:
+      - "8080:8080"
+    # WHY: sharing the host PID namespace lets the container read the host's
+    # processes, load and (through /host/proc/1) the host's real network
+    # counters, so ordinary port mapping works on Linux servers and on Docker
+    # Desktop alike. Host networking is NOT required.
     pid: host
     environment:
       STATS_LITE_ADDR: ":8080"

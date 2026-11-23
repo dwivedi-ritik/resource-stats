@@ -1,6 +1,9 @@
 package collector
 
 import (
+	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -174,5 +177,33 @@ func TestInterfaceWorthShowing(t *testing.T) {
 	}
 	if !interfaceWorthShowing(NetworkInterface{Name: "wg0", TxBytesPerSec: 12}) {
 		t.Fatal("anything moving traffic right now must show")
+	}
+}
+
+func TestHostNetDevPathUsesHostPIDOne(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("host /proc redirection only applies on Linux")
+	}
+	dir := t.TempDir()
+	t.Setenv("HOST_PROC", dir)
+	if got := hostNetDevPath(); got != "" {
+		t.Fatalf("missing file should disable redirection, got %q", got)
+	}
+	want := filepath.Join(dir, "1", "net", "dev")
+	if err := os.MkdirAll(filepath.Dir(want), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(want, []byte("Inter-|   Receive\n face |bytes\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if got := hostNetDevPath(); got != want {
+		t.Fatalf("hostNetDevPath = %q, want %q", got, want)
+	}
+}
+
+func TestHostNetDevPathEmptyWithoutHostProc(t *testing.T) {
+	t.Setenv("HOST_PROC", "")
+	if got := hostNetDevPath(); got != "" {
+		t.Fatalf("expected no redirection, got %q", got)
 	}
 }

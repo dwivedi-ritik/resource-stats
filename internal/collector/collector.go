@@ -3,6 +3,8 @@ package collector
 import (
 	"context"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"runtime"
 	"sort"
 	"strings"
@@ -224,13 +226,43 @@ func readMemory(ctx context.Context) MemoryStats {
 	return out
 }
 
+// hostNetDevPath returns the host's interface counters file when we are in a
+// container that shares the host PID namespace (pid: host) and HOST_PROC
+// points at the host's /proc. /proc/net is per network namespace, so the
+// container's own view is useless; PID 1 is the host's init and its
+// /proc/1/net/dev shows the real interfaces. This is what lets the compose
+// file use ordinary port mapping instead of host networking.
+func hostNetDevPath() string {
+	if runtime.GOOS != "linux" {
+		return ""
+	}
+	hostProc := os.Getenv("HOST_PROC")
+	if hostProc == "" {
+		return ""
+	}
+	path := filepath.Join(hostProc, "1", "net", "dev")
+	if _, err := os.Stat(path); err != nil {
+		return ""
+	}
+	return path
+}
+
+func readNetworkCounters(ctx context.Context) ([]net.IOCountersStat, error) {
+	if path := hostNetDevPath(); path != "" {
+		if counters, err := net.IOCountersByFileWithContext(ctx, true, path); err == nil {
+			return counters, nil
+		}
+	}
+	return net.IOCountersWithContext(ctx, true)
+}
+
 func isLoopback(name string) bool {
 	return name == "lo" || strings.HasPrefix(name, "lo0") || strings.HasPrefix(name, "Loopback")
 }
 
 func (c *Collector) readNetwork(ctx context.Context, elapsed time.Duration) NetworkStats {
 	out := NetworkStats{Interfaces: []NetworkInterface{}}
-	counters, err := net.IOCountersWithContext(ctx, true)
+	counters, err := readNetworkCounters(ctx)
 	if err != nil {
 		return out
 	}

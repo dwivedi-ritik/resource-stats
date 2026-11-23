@@ -46,10 +46,21 @@ make build-all      # dist/ with binaries for Linux, macOS and Windows
 docker compose up -d
 ```
 
-The included `docker-compose.yml` uses host networking and the host PID
-namespace and mounts `/` read-only at `/host`, so the container reports the
-host's real CPU, memory, network, disks and processes rather than its own
-sandbox. It also mounts the Docker socket read-only for container stats.
+Then open `http://<machine-ip>:8080`. To use a different port, change the
+left side of the mapping in `docker-compose.yml` (`"9090:8080"` opens it on
+9090).
+
+The compose file shares the host PID namespace and mounts `/` read-only at
+`/host`, so the container reports the host's real CPU, memory, disks and
+processes rather than its own sandbox. Network counters are read from the
+host's PID 1, which is why ordinary port mapping is enough and
+`network_mode: host` is not needed. It also mounts the Docker socket
+read-only for container stats.
+
+Docker Desktop on macOS or Windows runs containers in a Linux VM, so the
+"host" the container sees is that VM: CPU, memory and disks will be the VM's,
+not your Mac's or PC's. For a real view of a Mac or Windows machine run the
+binary directly; use the container on Linux servers.
 
 ## Configuration
 
