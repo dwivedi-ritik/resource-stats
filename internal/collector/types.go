@@ -14,6 +14,7 @@ type Snapshot struct {
 	Network   NetworkStats `json:"network"`
 	Disks     []DiskUsage  `json:"disks"`
 	DiskIO    DiskIOStats  `json:"disk_io"`
+	Battery   BatteryStats `json:"battery"`
 	Docker    DockerStats  `json:"docker"`
 }
 

@@ -4,7 +4,9 @@ go 1.24
 
 require (
 	github.com/Microsoft/go-winio v0.6.2
+	github.com/distatus/battery v0.11.0
 	github.com/shirou/gopsutil/v4 v4.25.9
+	howett.net/plist v1.0.0
 )
 
 require (

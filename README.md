@@ -10,6 +10,7 @@ heavier dashboards feel like overkill.
 - **Memory** used / available / total, swap
 - **Network** live in / out throughput per interface
 - **Storage** usage per filesystem, disk read / write throughput
+- **Battery** charge, time remaining, power draw, health and cycle count on laptops (card hides itself on machines without one)
 - **Docker** per-container CPU, memory, network and disk I/O
 - Live updates every second over Server-Sent Events, two minutes of history
 - Light and dark themes, works on a phone

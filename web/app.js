@@ -277,6 +277,59 @@
     });
   }
 
+  function batteryStateText(b) {
+    switch (b.state) {
+      case "charging": return "Charging";
+      case "discharging": return "On battery";
+      case "full": return "Plugged in, fully charged";
+      case "idle": return "Plugged in, holding charge";
+      case "empty": return "Empty";
+      default: return b.plugged_in ? "Plugged in" : "Unknown state";
+    }
+  }
+  function fmtDuration(seconds) {
+    var h = Math.floor(seconds / 3600), m = Math.round(seconds % 3600 / 60);
+    if (h === 0) return m + " min";
+    return h + "h " + (m < 10 ? "0" + m : m) + "m";
+  }
+  function fmtWh(mwh) { return (mwh / 1000).toFixed(mwh < 10000 ? 1 : 0) + " Wh"; }
+
+  function renderBattery(bs) {
+    var card = $("battery-card");
+    if (!bs || !bs.available || !bs.batteries.length) { card.hidden = true; return; }
+    card.hidden = false;
+    var b = bs.batteries[0];
+    $("battery-value").textContent = Math.round(b.percent);
+    var meta = [];
+    if (b.cycle_count > 0) meta.push(b.cycle_count + " cycles");
+    if (bs.batteries.length > 1) meta.push(bs.batteries.length + " batteries");
+    $("battery-meta").textContent = meta.join(" · ");
+    var fill = $("battery-fill");
+    fill.style.width = Math.min(100, b.percent) + "%";
+    // WHY: the colour follows the charge level only while unplugged; a low
+    // battery that is charging is not an emergency.
+    fill.className = "bar-fill battery" + (!b.plugged_in && b.percent <= 15 ? " low" : (!b.plugged_in && b.percent <= 30 ? " mid" : ""));
+    $("battery-state").textContent = batteryStateText(b);
+    var time = "";
+    if (b.time_remaining_seconds > 0) {
+      time = fmtDuration(b.time_remaining_seconds) + (b.state === "charging" ? " until full" : " left");
+    }
+    $("battery-time").textContent = time;
+    $("battery-power").textContent = b.power_watts > 0 ? b.power_watts.toFixed(1) + " W" : "—";
+    $("battery-health").textContent = b.health_percent > 0 ? Math.round(b.health_percent) + "%" : "—";
+    $("battery-capacity").textContent = b.full_capacity_mwh > 0 ? fmtWh(b.current_capacity_mwh) + " of " + fmtWh(b.full_capacity_mwh) : "—";
+    var extra = $("battery-extra");
+    var rest = bs.batteries.slice(1);
+    extra.hidden = rest.length === 0;
+    syncRows(extra, rest, function (_, i) { return "battery-" + i; }, function () {
+      return '<span class="name"></span><span class="val"></span><div class="bar"><div class="bar-fill battery"></div></div>';
+    }, function (el, x, i) {
+      el.children[0].textContent = "Battery " + (i + 2);
+      el.children[1].textContent = Math.round(x.percent) + "% · " + batteryStateText(x);
+      el.children[2].firstChild.style.width = Math.min(100, x.percent) + "%";
+    });
+  }
+
   function renderDocker(d) {
     var empty = $("docker-empty"), table = $("containers"), meta = $("docker-meta");
     if (!d.available) {
@@ -343,7 +396,7 @@
     Array.prototype.forEach.call(container.children, function (el) { existing[el.dataset.key] = el; });
     var seen = {};
     items.forEach(function (item, index) {
-      var key = keyOf(item);
+      var key = keyOf(item, index);
       seen[key] = true;
       var el = existing[key];
       if (!el) {
@@ -353,7 +406,7 @@
         el.innerHTML = template(item);
       }
       if (container.children[index] !== el) container.insertBefore(el, container.children[index] || null);
-      update(el, item);
+      update(el, item, index);
     });
     Object.keys(existing).forEach(function (key) { if (!seen[key]) container.removeChild(existing[key]); });
   }
@@ -373,6 +426,7 @@
     renderMemory(snap.memory);
     renderNetwork(snap.network);
     renderDisks(snap.disks || [], snap.disk_io);
+    renderBattery(snap.battery);
     renderDocker(snap.docker || { available: false, error: "", containers: [] });
     cpuChart.draw(history);
     memChart.draw(history);

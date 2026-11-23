@@ -38,8 +38,9 @@ type Options struct {
 // subscribers. Subscribers that fall behind skip samples rather than block
 // the loop.
 type Collector struct {
-	opts   Options
-	docker *dockerPoller
+	opts    Options
+	docker  *dockerPoller
+	battery *batteryReader
 
 	mu          sync.RWMutex
 	latest      Snapshot
@@ -62,7 +63,7 @@ func New(opts Options) *Collector {
 	if opts.Logger == nil {
 		opts.Logger = slog.Default()
 	}
-	c := &Collector{opts: opts, subscribers: map[chan Snapshot]struct{}{}}
+	c := &Collector{opts: opts, subscribers: map[chan Snapshot]struct{}{}, battery: newBatteryReader()}
 	if opts.Docker != nil {
 		c.docker = newDockerPoller(opts.Docker)
 	}
@@ -154,6 +155,7 @@ func (c *Collector) sample(ctx context.Context) {
 	snap.Network = c.readNetwork(ctx, elapsed)
 	snap.DiskIO = c.readDiskIO(ctx, elapsed)
 	snap.Disks = c.readDisks(ctx)
+	snap.Battery = c.battery.read(now)
 	c.prevAt = now
 
 	wg.Wait()
