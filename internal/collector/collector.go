@@ -18,7 +18,7 @@ import (
 	"github.com/shirou/gopsutil/v4/mem"
 	"github.com/shirou/gopsutil/v4/net"
 
-	"github.com/ritik/stats-lite/internal/dockerapi"
+	"github.com/dwivedi-ritik/resource-stats/internal/dockerapi"
 )
 
 // Options configure a Collector.

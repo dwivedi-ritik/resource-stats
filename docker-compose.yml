@@ -1,6 +1,6 @@
 services:
   stats-lite:
-    image: ghcr.io/ritik/stats-lite:latest
+    image: ghcr.io/dwivedi-ritik/resource-stats:latest
     build: .
     container_name: stats-lite
     restart: unless-stopped

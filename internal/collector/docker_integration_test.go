@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ritik/stats-lite/internal/dockerapi"
+	"github.com/dwivedi-ritik/resource-stats/internal/dockerapi"
 )
 
 // fakeDaemon serves a two-container Docker API over a unix socket so the whole

@@ -1,4 +1,4 @@
-module github.com/ritik/stats-lite
+module github.com/dwivedi-ritik/resource-stats
 
 go 1.24
 

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ritik/stats-lite/internal/collector"
+	"github.com/dwivedi-ritik/resource-stats/internal/collector"
 )
 
 // Source is the part of the collector the server needs.

@@ -17,9 +17,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ritik/stats-lite/internal/collector"
-	"github.com/ritik/stats-lite/internal/dockerapi"
-	"github.com/ritik/stats-lite/internal/server"
+	"github.com/dwivedi-ritik/resource-stats/internal/collector"
+	"github.com/dwivedi-ritik/resource-stats/internal/dockerapi"
+	"github.com/dwivedi-ritik/resource-stats/internal/server"
 )
 
 //go:embed web

@@ -9,7 +9,7 @@ import (
 
 	"github.com/shirou/gopsutil/v4/disk"
 
-	"github.com/ritik/stats-lite/internal/dockerapi"
+	"github.com/dwivedi-ritik/resource-stats/internal/dockerapi"
 )
 
 func TestRatePerSecond(t *testing.T) {

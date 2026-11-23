@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ritik/stats-lite/internal/dockerapi"
+	"github.com/dwivedi-ritik/resource-stats/internal/dockerapi"
 )
 
 // containerSample is what we remember between ticks to turn cumulative

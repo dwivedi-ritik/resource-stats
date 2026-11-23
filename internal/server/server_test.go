@@ -10,7 +10,7 @@ import (
 	"testing/fstest"
 	"time"
 
-	"github.com/ritik/stats-lite/internal/collector"
+	"github.com/dwivedi-ritik/resource-stats/internal/collector"
 )
 
 type fakeSource struct {
