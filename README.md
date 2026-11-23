@@ -47,7 +47,7 @@ make build-all      # dist/ with binaries for Linux, macOS and Windows
 docker compose up -d
 ```
 
-Then open `http://<machine-ip>:8080`. To use a different port, change the
+Then open `http://<machine-ip>:8089`. To use a different port, change the
 left side of the mapping in `docker-compose.yml` (`"9090:8080"` opens it on
 9090).
 

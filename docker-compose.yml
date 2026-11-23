@@ -5,9 +5,9 @@ services:
     container_name: stats-lite
     restart: unless-stopped
     # Change the left number to pick the port you open in the browser,
-    # for example "9090:8080" -> http://<machine-ip>:9090
+    # for example "9090:8080" -> http://<machine-ip>:9090 (currently 8089)
     ports:
-      - "8080:8080"
+      - "8089:8080"
     # WHY: sharing the host PID namespace lets the container read the host's
     # processes, load and (through /host/proc/1) the host's real network
     # counters, so ordinary port mapping works on Linux servers and on Docker
